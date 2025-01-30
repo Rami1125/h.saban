@@ -41,8 +41,23 @@
 
         <button onclick="submitForm()">📊 הצג נתונים</button>
 
-        <!-- תצוגת הנתונים -->
-        <div id="summary"></div>
+        <!-- טבלת ההזמנות -->
+        <h3>📋 רשימת הזמנות:</h3>
+        <table id="ordersTable">
+            <thead>
+                <tr>
+                    <th>📅 תאריך</th>
+                    <th>⏰ שעה</th>
+                    <th>🚛 נהג</th>
+                    <th>👤 לקוח</th>
+                    <th>📍 כתובת</th>
+                    <th>🚚 סוג הובלה</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- ההזמנות יוצגו כאן -->
+            </tbody>
+        </table>
 
         <!-- תרשים -->
         <canvas id="chartCanvas"></canvas>

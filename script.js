@@ -1,4 +1,7 @@
-// שמירת הנתונים
+// מערך לשמירת ההזמנות
+let orders = [];
+
+// אובייקט לשמירת ספירת סוגי הובלות
 let transportData = {
     "הובלת מנוף": 0,
     "הובלת משאית": 0,
@@ -9,7 +12,7 @@ let transportData = {
 // יצירת גרף
 let ctx = document.getElementById('chartCanvas').getContext('2d');
 let chart = new Chart(ctx, {
-    type: 'bar', 
+    type: 'bar',
     data: {
         labels: Object.keys(transportData),
         datasets: [{
@@ -27,7 +30,7 @@ let chart = new Chart(ctx, {
     }
 });
 
-// פונקציה לשליחת הטופס ועדכון הגרף
+// פונקציה להוספת הזמנה
 function submitForm() {
     let date = document.getElementById('date').value;
     let time = document.getElementById('time').value;
@@ -41,19 +44,43 @@ function submitForm() {
         return;
     }
 
-    // עדכון הנתונים
+    // הוספת הנתונים למערך
+    let newOrder = {
+        date,
+        time,
+        driver,
+        client,
+        address,
+        transportType
+    };
+    orders.push(newOrder);
+
+    // עדכון ספירת סוגי הובלות
     transportData[transportType]++;
+
+    // עדכון הטבלה
+    updateTable();
+
+    // עדכון הגרף
     chart.data.datasets[0].data = Object.values(transportData);
     chart.update();
+}
 
-    // הצגת הנתונים על המסך
-    document.getElementById('summary').innerHTML = `
-        <h3>📋 פרטי ההזמנה:</h3>
-        <p><strong>📅 תאריך:</strong> ${date}</p>
-        <p><strong>⏰ שעת יציאה:</strong> ${time}</p>
-        <p><strong>🚛 שם נהג:</strong> ${driver}</p>
-        <p><strong>👤 שם לקוח:</strong> ${client}</p>
-        <p><strong>📍 כתובת אספקה:</strong> ${address}</p>
-        <p><strong>🚚 סוג הובלה:</strong> ${transportType}</p>
-    `;
+// פונקציה לעדכון הטבלה עם הנתונים החדשים
+function updateTable() {
+    let tableBody = document.querySelector("#ordersTable tbody");
+    tableBody.innerHTML = ""; // ניקוי הטבלה לפני מילוי מחדש
+
+    orders.forEach(order => {
+        let row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${order.date}</td>
+            <td>${order.time}</td>
+            <td>${order.driver}</td>
+            <td>${order.client}</td>
+            <td>${order.address}</td>
+            <td>${order.transportType}</td>
+        `;
+        tableBody.appendChild(row);
+    });
 }

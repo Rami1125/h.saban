@@ -1,36 +1,7 @@
-// מערך לשמירת ההזמנות
-let orders = [];
+// טעינת נתונים מקומיים אם קיימים
+let orders = JSON.parse(localStorage.getItem('orders')) || [];
 
-// אובייקט לשמירת ספירת סוגי הובלות
-let transportData = {
-    "הובלת מנוף": 0,
-    "הובלת משאית": 0,
-    "עבודת מנוף": 0,
-    "הובלת מנוף 15 מטר": 0
-};
-
-// יצירת גרף
-let ctx = document.getElementById('chartCanvas').getContext('2d');
-let chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: Object.keys(transportData),
-        datasets: [{
-            label: "כמות הזמנות לפי סוג הובלה",
-            data: Object.values(transportData),
-            backgroundColor: ['red', 'blue', 'green', 'orange'],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: { beginAtZero: true }
-        }
-    }
-});
-
-// פונקציה להוספת הזמנה
+// פונקציה להוספת הזמנה ושמירה ל-LocalStorage
 function submitForm() {
     let date = document.getElementById('date').value;
     let time = document.getElementById('time').value;
@@ -44,32 +15,20 @@ function submitForm() {
         return;
     }
 
-    // הוספת הנתונים למערך
-    let newOrder = {
-        date,
-        time,
-        driver,
-        client,
-        address,
-        transportType
-    };
+    let newOrder = { date, time, driver, client, address, transportType };
     orders.push(newOrder);
 
-    // עדכון ספירת סוגי הובלות
-    transportData[transportType]++;
+    // שמירת הנתונים ב-LocalStorage
+    localStorage.setItem('orders', JSON.stringify(orders));
 
     // עדכון הטבלה
     updateTable();
-
-    // עדכון הגרף
-    chart.data.datasets[0].data = Object.values(transportData);
-    chart.update();
 }
 
-// פונקציה לעדכון הטבלה עם הנתונים החדשים
+// פונקציה לטעינת הנתונים ולתצוגה בטבלה
 function updateTable() {
     let tableBody = document.querySelector("#ordersTable tbody");
-    tableBody.innerHTML = ""; // ניקוי הטבלה לפני מילוי מחדש
+    tableBody.innerHTML = "";
 
     orders.forEach(order => {
         let row = document.createElement("tr");
@@ -84,3 +43,6 @@ function updateTable() {
         tableBody.appendChild(row);
     });
 }
+
+// טעינת הטבלה עם הנתונים השמורים
+updateTable();

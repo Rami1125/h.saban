@@ -3,29 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת ניהול הזמנות</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>שאלון לתכנון יום</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- ספריית Chart.js -->
 </head>
 <body>
-    <header>
-        <h1>מערכת ניהול הזמנות</h1>
-        <nav>
-            <ul>
-                <li><a href="orders-management.html">ניהול הזמנות</a></li>
-                <li><a href="calendar-view.html">תצוגת יומן</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <main>
-        <h2>ברוכים הבאים למערכת ניהול הזמנות</h2>
-        <p>בחרו את הפעולה הרצויה מהתפריט למעלה.</p>
-    </main>
+    <div class="container">
+        <h1>📝 שאלון לתכנון יום</h1>
 
-    <footer>
-        <p>&copy; 2025 מערכת ניהול הזמנות</p>
-    </footer>
+        <label for="date">📅 תאריך:</label>
+        <input type="date" id="date">
 
-    <script src="assets/js/script.js"></script>
+        <label for="time">⏰ שעת יציאה:</label>
+        <input type="time" id="time">
+
+        <label for="driver">🚛 שם הנהג:</label>
+        <select id="driver">
+            <option value="חכמת">חכמת</option>
+            <option value="עלי">עלי</option>
+            <option value="שאול">שאול</option>
+        </select>
+
+        <label for="client">👤 שם הלקוח:</label>
+        <input type="text" id="client" placeholder="שם הלקוח">
+
+        <label for="address">📍 כתובת אספקה:</label>
+        <input type="text" id="address" placeholder="כתובת אספקה">
+
+        <label for="transportType">🚚 סוג הובלה:</label>
+        <select id="transportType">
+            <option value="הובלת מנוף">הובלת מנוף</option>
+            <option value="הובלת משאית">הובלת משאית</option>
+            <option value="עבודת מנוף">עבודת מנוף</option>
+            <option value="הובלת מנוף 15 מטר">הובלת מנוף 15 מטר</option>
+        </select>
+
+        <button onclick="submitForm()">📊 הצג נתונים</button>
+
+        <!-- תצוגת הנתונים -->
+        <div id="summary"></div>
+
+        <!-- תרשים -->
+        <canvas id="chartCanvas"></canvas>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

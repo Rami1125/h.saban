@@ -1,4 +1,4 @@
-תיצור <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he">
     <head>
             <meta charset="UTF-8">
@@ -36,12 +36,11 @@
                             <option value="הובלת מנוף">הובלת מנוף</option>option>
                             <option value="הובלת משאית">הובלת משאית</option>option>
                             <option value="עבודת מנוף">עבודת מנוף</option>option>
-                        <option value="הובלת מנוף 15 מטר">הובלת מנוף 15 מטר</option>option>
+                            <option value="הובלת מנוף 15 מטר">הובלת מנוף 15 מטר</option>option>
                 </select>select>
         
                 <button onclick="submitForm()">📊 הוסף הזמנה</button>button>
         
-                <!-- טבלת הזמנות -->
                 <h2>📋 רשימת הזמנות</h2>
                 <table id="ordersTable">
                             <thead>
@@ -53,6 +52,7 @@
                                                 <th>📍 כתובת</th>
                                                 <th>🚚 סוג הובלה</th>
                                                 <th>📝 הערה</th>
+                                                <th>📊 סטטוס</th>
                                                 <th>✏️ עריכה</th>
                                                 <th>🗑️ מחיקה</th>
                                                 </tr>
@@ -62,9 +62,8 @@
                             </tbody>
                 </table>table>
 
-                    <!-- תרשים -->
-                    <h2>📊 סטטיסטיקות</h2>
-                    <canvas id="chartCanvas"></canvas>canvas>
+                    <h2>📊 תרשים הזמנות לפי נהג ושעת אספקה</h2>
+                    <canvas id="driverChart"></canvas>canvas>
         </div>div>
 
         <script src="script.js"></script>

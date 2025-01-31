@@ -1,77 +1,63 @@
-<!DOCTYPE html>
-<html lang="he">
-    <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>שאלון תכנון יום</title>
-        <link rel="stylesheet" href="style.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
-<body>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
 
-        <div class="container">
-                    <h1>📝 שאלון תכנון יום</h1>
-        
-                <label for="date">📅 תאריך:</label>label>
-                <input type="date" id="date">
-        
-                <label for="time">⏰ שעת יציאה:</label>label>
-                <input type="time" id="time">
-        
-                <label for="driver">🚛 שם הנהג:</label>label>
-                <select id="driver">
-                            <option value="חכמת">חכמת</option>option>
-                            <option value="עלי">עלי</option>option>
-                            <option value="שאול">שאול</option>option>
-                </select>select>
-        
-                <label for="client">👤 שם הלקוח:</label>label>
-                <input type="text" id="client" placeholder="שם הלקוח">
-        
-                <label for="address">📍 כתובת אספקה:</label>label>
-                <input type="text" id="address" placeholder="כתובת אספקה">
-        
-                <label for="transportType">🚚 סוג הובלה:</label>label>
-                <select id="transportType">
-                            <option value="הובלת מנוף">הובלת מנוף</option>option>
-                            <option value="הובלת משאית">הובלת משאית</option>option>
-                            <option value="עבודת מנוף">עבודת מנוף</option>option>
-                            <option value="הובלת מנוף 15 מטר">הובלת מנוף 15 מטר</option>option>
-                </select>select>
-        
-                <button onclick="submitForm()">📊 הוסף הזמנה</button>button>
-        
-                <h2>📋 רשימת הזמנות</h2>
-                <table id="ordersTable">
-                            <thead>
-                                                <tr>
-                                                                        <th>📅 תאריך</th>
-                                                <th>⏰ שעה</th>
-                                                <th>🚛 נהג</th>
-                                                <th>👤 לקוח</th>
-                                                <th>📍 כתובת</th>
-                                                <th>🚚 סוג הובלה</th>
-                                                <th>📝 הערה</th>
-                                                <th>📊 סטטוס</th>
-                                                <th>✏️ עריכה</th>
-                                                <th>🗑️ מחיקה</th>
-                                                </tr>
-                            </thead>
-                            <tbody>
-                                                <!-- ההזמנות יוצגו כאן -->
-                            </tbody>
-                </table>table>
+.container {
+    max-width: 400px;
+    margin: 20px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    direction: rtl;
+}
 
-                    <h2>📊 תרשים הזמנות לפי נהג ושעת אספקה</h2>
-                    <canvas id="driverChart"></canvas>canvas>
-        </div>div>
+h1, h2 {
+    text-align: center;
+    color: #007BFF;
+}
 
-        <script src="script.js"></script>
-</body>
-</html>html>
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-                            </tbody></th></th>
-                                                </tr>
-                            </thead></h2></h1>
-</body></title>
-    </head>
+button:hover {
+    background-color: #0056b3;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.status {
+    font-weight: bold;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0.5; }
+}
+
+.green { color: green; }
+.yellow { color: orange; }
+.red { color: red; }
+.orange { color: darkorange; }

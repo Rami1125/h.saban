@@ -1,63 +1,174 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
+  font-family: 'Arial', sans-serif;
+  direction: rtl;
+  text-align: center;
+  background-color: #f4f7f6;
+  margin: 0;
+  padding: 0;
 }
 
-.container {
-    max-width: 400px;
-    margin: 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    direction: rtl;
+.header {
+  background-color: #007bff;
+  color: white;
+  padding: 15px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
-h1, h2 {
-    text-align: center;
-    color: #007BFF;
+.clock {
+  font-size: 22px;
+  font-weight: bold;
+  background-color: #ff0000;
+  color: white;
+  padding: 10px;
+  margin: 10px auto;
+  width: fit-content;
+  border-radius: 10px;
+  animation: blink 1s infinite;
+}
+
+/* אנימציית הבהוב */
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* מסגרת לגרפים */
+.charts-frame {
+  width: 95%;
+  margin: 20px auto;
+  border: 2px dashed #aaa;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.chart-box {
+  width: 250px;
+  height: 250px;
+  background-color: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* טבלת ההזמנות בצד ימין */
+.orders-section {
+  display: flex;
+  flex-direction: row-reverse; /* טבלה לצד ימין */
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.orders-table {
+  width: 50%;
+  margin: 20px;
+  border-collapse: collapse;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+th,
+td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+}
+
+input,
+select,
+button {
+  padding: 8px;
+  font-size: 16px;
+  margin: 5px;
+  border-radius: 5px;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 16px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: #218838;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
+.delete-btn {
+  background-color: red;
+  font-size: 16px;
+  padding: 5px;
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
+.delete-btn:hover {
+  background-color: darkred;
 }
 
-.status {
-    font-weight: bold;
-    animation: blink 1s infinite;
+/* צבעים לסטטוסים */
+.status-ready {
+  background-color: green;
+  color: white;
+  animation: blink 1s infinite;
 }
 
-@keyframes blink {
-    50% { opacity: 0.5; }
+.status-in-progress {
+  background-color: yellow;
+  color: black;
+  animation: blink 1s infinite;
 }
 
-.green { color: green; }
-.yellow { color: orange; }
-.red { color: red; }
-.orange { color: darkorange; }
+.status-delayed {
+  background-color: red;
+  color: white;
+  animation: blink 1s infinite;
+}
+
+.status-supka {
+  background-color: purple;
+  color: white;
+  animation: blink 1s infinite;
+}
+
+/* סגנון לטופס ההזמנה בצד שמאל */
+.order-form-container {
+  width: 40%;
+  margin: 20px;
+}
+
+/* טבלאות */
+.order-form-container table,
+.orders-table {
+  width: 100%;
+}
+
+/* אזור להזמנה הקרובה */
+.next-order-container {
+  margin: 20px auto;
+}
+
+.next-order-blink {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #ff00ff;
+  padding: 10px;
+  margin: 10px auto;
+  width: fit-content;
+  border-radius: 10px;
+  animation: blink 1s infinite;
+}

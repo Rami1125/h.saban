@@ -1,9 +1,12 @@
-// רישום הפלאגין של DataLabels
+// רישום הפלאגין של DataLabels (לצורך גרף עם מספרים)
 Chart.register(ChartDataLabels);
 
 let orders = [];
 
-// טווח שעות מ-06:00 עד 17:00 בכל חצי שעה
+// 1. קודם כל, נטען הזמנות ששמורות ב-Local Storage (אם קיימות)
+loadOrdersFromStorage();
+
+// 2. טווח שעות מ-06:00 עד 17:00 בכל חצי שעה
 const timeOptions = generateTimeSlots("06:00", "17:00", 30);
 
 // פונקציה ליצירת רשימת זמני חצי שעה
@@ -47,6 +50,8 @@ timeOptions.forEach((t) => {
   deliveryTimeSelect.appendChild(opt);
 });
 
+// ------------------- הגדרת הגרפים (Chart.js) -------------------
+
 // תרשים: כמות הזמנות
 const totalOrdersChart = new Chart(document.getElementById("totalOrdersChart"), {
   type: "doughnut",
@@ -54,7 +59,7 @@ const totalOrdersChart = new Chart(document.getElementById("totalOrdersChart"), 
     labels: ["הזמנות"],
     datasets: [
       {
-        label: "מספר כמות הזמנות", // תווית לגרף
+        label: "מספר כמות הזמנות",
         data: [0],
         backgroundColor: ["#007bff"],
       },
@@ -146,7 +151,7 @@ const driverOrdersChart = new Chart(document.getElementById("driverOrdersChart")
   },
 });
 
-// הוספנו 'סופקה' כסטטוס נוסף
+// 3. סטטוסים אפשריים (כולל 'סופקה' - לצורך הדוגמה)
 const statuses = ["מוכנה", "בטיפול", "מתעכבת", "סופקה"];
 
 // פונקציה שמחזירה את מחלקת ה-CSS הנכונה לפי הסטטוס
@@ -204,6 +209,20 @@ function updateCharts() {
   driverOrdersChart.update();
 }
 
+// *** פונקציות Local Storage *** //
+function loadOrdersFromStorage() {
+  const stored = localStorage.getItem("orders");
+  if (stored) {
+    orders = JSON.parse(stored);
+  } else {
+    orders = [];
+  }
+}
+
+function saveOrdersToStorage() {
+  localStorage.setItem("orders", JSON.stringify(orders));
+}
+
 // הוספת הזמנה חדשה
 function addOrder() {
   const order = {
@@ -221,6 +240,9 @@ function addOrder() {
   renderOrders();
   updateNextOrderBanner();
   updateCharts();
+
+  // שמירה ל-Local Storage
+  saveOrdersToStorage();
 }
 
 // הצגת ההזמנות בטבלה
@@ -265,6 +287,9 @@ function updateStatus(index) {
   renderOrders();
   updateNextOrderBanner();
   updateCharts();
+
+  // שמירה ל-Local Storage
+  saveOrdersToStorage();
 }
 
 // מחיקת הזמנה
@@ -274,6 +299,9 @@ function deleteOrder(index) {
   renderOrders();
   updateNextOrderBanner();
   updateCharts();
+
+  // שמירה ל-Local Storage
+  saveOrdersToStorage();
 }
 
 // שינוי זמן אספקה דינמי
@@ -283,6 +311,9 @@ function updateOrderTime(index, newTime) {
   renderOrders();
   updateNextOrderBanner();
   updateCharts();
+
+  // שמירה ל-Local Storage
+  saveOrdersToStorage();
 }
 
 // עדכון השעון
@@ -290,3 +321,9 @@ function updateClock() {
   document.getElementById("currentTime").innerText = new Date().toLocaleString("he-IL");
 }
 setInterval(updateClock, 1000);
+
+// לבסוף נרנדר את ההזמנות הקיימות ומעדכנים גרפים ובאנר
+sortOrders();
+renderOrders();
+updateNextOrderBanner();
+updateCharts();

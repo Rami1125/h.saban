@@ -1,4 +1,4 @@
-/* דוגמה: יכול להיות צבע או תמונת רקע */
+/* רקע כללי */
 body {
   font-family: 'Arial', sans-serif;
   direction: rtl;
@@ -6,9 +6,9 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f4f7f6;
-  min-height: 100vh; /* גובה מינימלי כל המסך */
+  min-height: 100vh; 
   max-width: 100%;
-  overflow-x: hidden; /* בלי גלילה רוחבית */
+  overflow-x: hidden;
 }
 
 .header {
@@ -31,7 +31,6 @@ body {
   animation: blink 1s infinite;
 }
 
-/* אנימציית הבהוב */
 @keyframes blink {
   50% {
     opacity: 0;
@@ -63,39 +62,53 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* 
-   אזור מיוחד להזמנות הראשונות בראש הדף
-   הקטנה כדי לא לעבור מסגרת 
-*/
-.upcoming-list-container {
+/* אזור להזמנה הקרובה */
+.next-order-container {
+  margin: 20px auto;
+}
+
+.next-order-blink {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #ff00ff;
+  padding: 10px;
+  margin: 10px auto;
+  width: fit-content;
+  border-radius: 10px;
+  /* ביטול אנימציית הבהוב */
+  animation: none;
+}
+
+/* ביטול הבהוב כיתה כללית */
+.no-blink {
+  animation: none !important;
+}
+
+/* אזור רשימה אמצעית (הזמנות ממתינות ליציאה) */
+.waiting-list-container {
   max-width: 95%;
-  margin: 0 auto 20px;
+  margin: 20px auto;
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 10px;
 }
 
-/* מראה של כל שורה בהזמנה בראש */
-.mini-order-line {
-  margin: 6px auto;
+.waiting-list-container h2 {
+  margin-bottom: 10px;
 }
 
-/* אימוג'י המהבהב (עיגול בצבע הסטטוס) */
-@keyframes blinkEmoji {
-  50% {
-    opacity: 0;
-  }
-}
-.blink-emoji {
-  animation: blinkEmoji 1s infinite;
-}
-
-/* אין הבהוב בטקסט עצמו (ביטול אנימציה) */
-.no-blink {
-  animation: none !important;
+/* כל שורה בחלק האמצעי */
+.waiting-item {
+  font-size: 1.2rem;  /* טקסט מוגדל */
+  font-weight: bold;
+  padding: 8px;
+  margin: 5px auto;
+  border-radius: 5px;
+  /* נקבע צבע רקע וטקסט לפי הסטטוס ע\"י כיתות status-XXX */
 }
 
-/* אזור הטופס+טבלה */
+/* טופס וטבלה מצדדים */
 .orders-section {
   display: flex;
   flex-direction: row-reverse;
@@ -166,7 +179,7 @@ button:hover {
   background-color: darkred;
 }
 
-/* ביטול הבהוב מכל השורה: רק צבע מלא */
+/* צבע לשורות בטבלה (בלי הבהוב) */
 .status-ready {
   background-color: green;
   color: white;
@@ -187,24 +200,28 @@ button:hover {
   color: white;
 }
 
-/* אזור להזמנה הקרובה */
-.next-order-container {
-  margin: 20px auto;
+/* אותם צבעים גם לרשימה האמצעית */
+.waiting-ready {
+  background-color: green;
+  color: white;
 }
 
-.next-order-blink {
-  font-size: 20px;
-  font-weight: bold;
-  color: #ffffff;
-  background-color: #ff00ff;
-  padding: 10px;
-  margin: 10px auto;
-  width: fit-content;
-  border-radius: 10px;
-  /* animation: blink 1s infinite; - בוטל! */
+.waiting-in-progress {
+  background-color: yellow;
+  color: black;
 }
 
-/* מדיה קוורי למסכים צרים */
+.waiting-delayed {
+  background-color: red;
+  color: white;
+}
+
+.waiting-supka {
+  background-color: purple;
+  color: white;
+}
+
+/* התאמה למסכים צרים */
 @media (max-width: 600px) {
   .orders-section {
     flex-direction: column;

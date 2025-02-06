@@ -3,39 +3,26 @@ Chart.register(ChartDataLabels);
 
 let orders = [];
 
-// 1. קודם כל, נטען הזמנות ששמורות ב-Local Storage (אם קיימות)
+/* טוענים הזמנות ששמורות ב-Local Storage (אם קיימות) */
 loadOrdersFromStorage();
 
-// 2. טווח שעות מ-06:00 עד 17:00 בכל חצי שעה
+/* טווח שעות מ-06:00 עד 17:00 בכל חצי שעה */
 const timeOptions = generateTimeSlots("06:00", "17:00", 30);
 
-// פונקציה ליצירת רשימת זמני חצי שעה
 function generateTimeSlots(start, end, stepMinutes) {
   const slots = [];
-  let startParts = start.split(":");
-  let endParts = end.split(":");
+  let [startHour, startMinute] = start.split(":").map(Number);
+  let [endHour, endMinute] = end.split(":").map(Number);
 
-  let startHour = parseInt(startParts[0]);
-  let startMinute = parseInt(startParts[1]);
-  let endHour = parseInt(endParts[0]);
-  let endMinute = parseInt(endParts[1]);
-
-  let currentHour = startHour;
-  let currentMinute = startMinute;
-
-  while (
-    currentHour < endHour ||
-    (currentHour === endHour && currentMinute <= endMinute)
-  ) {
-    const hh = String(currentHour).padStart(2, "0");
-    const mm = String(currentMinute).padStart(2, "0");
+  while (startHour < endHour || (startHour === endHour && startMinute <= endMinute)) {
+    const hh = String(startHour).padStart(2, "0");
+    const mm = String(startMinute).padStart(2, "0");
     slots.push(`${hh}:${mm}`);
 
-    // הוספת דקות
-    currentMinute += stepMinutes;
-    if (currentMinute >= 60) {
-      currentHour++;
-      currentMinute -= 60;
+    startMinute += stepMinutes;
+    if (startMinute >= 60) {
+      startHour++;
+      startMinute -= 60;
     }
   }
   return slots;
@@ -52,7 +39,6 @@ timeOptions.forEach((t) => {
 
 // ------------------- הגדרת הגרפים (Chart.js) -------------------
 
-// תרשים: כמות הזמנות
 const totalOrdersChart = new Chart(document.getElementById("totalOrdersChart"), {
   type: "doughnut",
   data: {
@@ -67,24 +53,17 @@ const totalOrdersChart = new Chart(document.getElementById("totalOrdersChart"), 
   },
   options: {
     plugins: {
-      legend: {
-        display: true,
-      },
+      legend: { display: true },
       datalabels: {
         color: "#fff",
-        font: {
-          weight: "bold",
-        },
+        font: { weight: "bold" },
         display: true,
-        formatter: (value, ctx) => {
-          return value;
-        },
+        formatter: (value) => value,
       },
     },
   },
 });
 
-// תרשים: הזמנות מוכנות לעומת לא מוכנות
 const readyOrdersChart = new Chart(document.getElementById("readyOrdersChart"), {
   type: "doughnut",
   data: {
@@ -98,24 +77,17 @@ const readyOrdersChart = new Chart(document.getElementById("readyOrdersChart"), 
   },
   options: {
     plugins: {
-      legend: {
-        display: true,
-      },
+      legend: { display: true },
       datalabels: {
         color: "#fff",
-        font: {
-          weight: "bold",
-        },
+        font: { weight: "bold" },
         display: true,
-        formatter: (value, ctx) => {
-          return value;
-        },
+        formatter: (value) => value,
       },
     },
   },
 });
 
-// תרשים: הזמנות לפי נהג
 const driverOrdersChart = new Chart(document.getElementById("driverOrdersChart"), {
   type: "bar",
   data: {
@@ -129,44 +101,46 @@ const driverOrdersChart = new Chart(document.getElementById("driverOrdersChart")
     ],
   },
   options: {
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
+    scales: { y: { beginAtZero: true } },
     plugins: {
       datalabels: {
         color: "#000",
-        font: {
-          weight: "bold",
-        },
+        font: { weight: "bold" },
         anchor: "end",
         align: "top",
         display: true,
-        formatter: (value, ctx) => {
-          return value;
-        },
+        formatter: (value) => value,
       },
     },
   },
 });
 
-// 3. סטטוסים אפשריים (כולל 'סופקה' - לצורך הדוגמה)
+// סטטוסים אפשריים (כולל 'סופקה')
 const statuses = ["מוכנה", "בטיפול", "מתעכבת", "סופקה"];
 
-// פונקציה שמחזירה את מחלקת ה-CSS הנכונה לפי הסטטוס
+/* עבור הזמנות בראש הדף - אימוג'י בצבע סטטוס + הבהוב */
+function getEmojiForStatus(status) {
+  switch (status) {
+    case "מוכנה":     return "<span class='blink-emoji'>🟢</span>";
+    case "בטיפול":    return "<span class='blink-emoji'>🟡</span>";
+    case "מתעכבת":    return "<span class='blink-emoji'>🔴</span>";
+    case "סופקה":     return "<span class='blink-emoji'>🟣</span>";
+    default:          return "";
+  }
+}
+
+// פונקציה שמחזירה את מחלקת ה-CSS הנכונה לפי הסטטוס (בלי הבהוב)
 function getStatusClass(status) {
-  if (status === "מוכנה") return "status-ready";
-  if (status === "בטיפול") return "status-in-progress";
-  if (status === "מתעכבת") return "status-delayed";
-  if (status === "סופקה") return "status-supka";
+  if (status === "מוכנה")     return "status-ready";
+  if (status === "בטיפול")    return "status-in-progress";
+  if (status === "מתעכבת")    return "status-delayed";
+  if (status === "סופקה")     return "status-supka";
   return "";
 }
 
-// ממיר 'HH:MM' לדקות
 function timeToMinutes(timeStr) {
-  const [hh, mm] = timeStr.split(":");
-  return parseInt(hh) * 60 + parseInt(mm);
+  const [hh, mm] = timeStr.split(":").map(Number);
+  return hh * 60 + mm;
 }
 
 // ממיין את orders לפי שעת אספקה
@@ -174,42 +148,7 @@ function sortOrders() {
   orders.sort((a, b) => timeToMinutes(a.deliveryTime) - timeToMinutes(b.deliveryTime));
 }
 
-// עדכון הבאנר של ההזמנה הקרובה
-function updateNextOrderBanner() {
-  const nextOrderDiv = document.getElementById("nextOrderInfo");
-  if (!nextOrderDiv) return;
-
-  if (orders.length === 0) {
-    nextOrderDiv.innerHTML = "אין הזמנות כרגע";
-    return;
-  }
-
-  // לאחר המיון, ההזמנה הקרובה ביותר תהיה orders[0]
-  const earliest = orders[0];
-  nextOrderDiv.innerHTML = `לקוח: ${earliest.customerName}, נהג: ${earliest.driverName}`;
-}
-
-// עדכון כל הגרפים
-function updateCharts() {
-  // תרשים כמות הזמנות
-  totalOrdersChart.data.datasets[0].data = [orders.length];
-  totalOrdersChart.update();
-
-  // תרשים הזמנות מוכנות (נחשבות רק 'מוכנה')
-  const readyCount = orders.filter((order) => order.status === "מוכנה").length;
-  readyOrdersChart.data.datasets[0].data = [readyCount, orders.length - readyCount];
-  readyOrdersChart.update();
-
-  // תרשים הזמנות לפי נהג
-  const drivers = ["חכמת", "שאול", "עלי"];
-  const driverCounts = drivers.map(
-    (driver) => orders.filter((order) => order.driverName === driver).length
-  );
-  driverOrdersChart.data.datasets[0].data = driverCounts;
-  driverOrdersChart.update();
-}
-
-// *** פונקציות Local Storage *** //
+// פונקציות Local Storage
 function loadOrdersFromStorage() {
   const stored = localStorage.getItem("orders");
   if (stored) {
@@ -223,107 +162,35 @@ function saveOrdersToStorage() {
   localStorage.setItem("orders", JSON.stringify(orders));
 }
 
-// הוספת הזמנה חדשה
-function addOrder() {
-  const order = {
-    customerName: document.getElementById("customerName").value,
-    deliveryAddress: document.getElementById("deliveryAddress").value,
-    warehouse: document.getElementById("warehouse").value,
-    transportType: document.getElementById("transportType").value,
-    driverName: document.getElementById("driverName").value,
-    deliveryTime: document.getElementById("deliveryTime").value,
-    status: "בטיפול", // ברירת מחדל להזמנה חדשה
-  };
+// עדכון הבאנר של ההזמנה הקרובה (רק הראשונה)
+function updateNextOrderBanner() {
+  const nextOrderDiv = document.getElementById("nextOrderInfo");
+  if (!nextOrderDiv) return;
 
-  orders.push(order);
-  sortOrders();
-  renderOrders();
-  updateNextOrderBanner();
-  updateCharts();
-
-  // שמירה ל-Local Storage
-  saveOrdersToStorage();
+  if (orders.length === 0) {
+    nextOrderDiv.innerHTML = "אין הזמנות כרגע";
+    return;
+  }
+  const earliest = orders[0];
+  nextOrderDiv.innerHTML = `לקוח: ${earliest.customerName}, נהג: ${earliest.driverName}`;
 }
 
-// הצגת ההזמנות בטבלה
-function renderOrders() {
-  const tbody = document.querySelector("#ordersTable tbody");
-  tbody.innerHTML = "";
+// מציג עד 3 הזמנות בראש הדף עם אימוג׳י מהבהב לפי סטטוס
+function updateUpcomingOrdersList() {
+  const container = document.getElementById("upcomingOrdersList");
+  if (!container) return;
 
-  orders.forEach((order, index) => {
-    tbody.innerHTML += `
-      <tr class="${getStatusClass(order.status)}">
-        <td>${order.customerName}</td>
-        <td>${order.deliveryAddress}</td>
-        <td>${order.warehouse}</td>
-        <td>${order.transportType}</td>
-        <td>${order.driverName}</td>
-        <td>
-          <select onchange="updateOrderTime(${index}, this.value)">
-            ${timeOptions
-              .map(
-                (t) =>
-                  `<option value='${t}' ${
-                    t === order.deliveryTime ? "selected" : ""
-                  }>${t}</option>`
-              )
-              .join("")}
-          </select>
-        </td>
-        <td><button onclick="updateStatus(${index})">${order.status}</button></td>
-        <td><button class="delete-btn" onclick="deleteOrder(${index})">🗑</button></td>
-      </tr>
-    `;
-  });
-}
+  container.innerHTML = "";
+  if (orders.length === 0) {
+    container.innerHTML = "אין הזמנות";
+    return;
+  }
 
-// שינוי סטטוס ההזמנה
-function updateStatus(index) {
-  const currentStatus = orders[index].status;
-  const currentIndex = statuses.indexOf(currentStatus);
-  orders[index].status = statuses[(currentIndex + 1) % statuses.length];
-
-  sortOrders();
-  renderOrders();
-  updateNextOrderBanner();
-  updateCharts();
-
-  // שמירה ל-Local Storage
-  saveOrdersToStorage();
-}
-
-// מחיקת הזמנה
-function deleteOrder(index) {
-  orders.splice(index, 1);
-  sortOrders();
-  renderOrders();
-  updateNextOrderBanner();
-  updateCharts();
-
-  // שמירה ל-Local Storage
-  saveOrdersToStorage();
-}
-
-// שינוי זמן אספקה דינמי
-function updateOrderTime(index, newTime) {
-  orders[index].deliveryTime = newTime;
-  sortOrders();
-  renderOrders();
-  updateNextOrderBanner();
-  updateCharts();
-
-  // שמירה ל-Local Storage
-  saveOrdersToStorage();
-}
-
-// עדכון השעון
-function updateClock() {
-  document.getElementById("currentTime").innerText = new Date().toLocaleString("he-IL");
-}
-setInterval(updateClock, 1000);
-
-// לבסוף נרנדר את ההזמנות הקיימות ומעדכנים גרפים ובאנר
-sortOrders();
-renderOrders();
-updateNextOrderBanner();
-updateCharts();
+  // ניקח את ההזמנות הראשונות (3 במקרה זה) אחרי שמיין
+  const maxShow = Math.min(orders.length, 3);
+  for (let i = 0; i < maxShow; i++) {
+    const o = orders[i];
+    const circle = getEmojiForStatus(o.status);
+    const div = document.createElement("div");
+    div.className = "mini-order-line";
+ 

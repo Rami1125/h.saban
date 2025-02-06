@@ -28,14 +28,7 @@
   <!-- אזור להזמנה הקרובה (רק אחת) -->
   <div class="next-order-container">
     <h2>🚨 הזמנה קרובה</h2>
-    <!-- הטקסט כאן כבר לא מהבהב -->
     <div class="next-order-blink no-blink" id="nextOrderInfo">אין הזמנות כרגע</div>
-  </div>
-
-  <!-- אזור להצגת כמה הזמנות מוקדמות (עד 3) עם אימוג׳י מהבהב -->
-  <div class="upcoming-list-container">
-    <h2>✨ רשימת הזמנות ראשונות</h2>
-    <div id="upcomingOrdersList"></div>
   </div>
 
   <!-- מסגרת הגרפים -->
@@ -54,7 +47,18 @@
               <h3>🚛 הזמנות לפי נהג</h3>
               <canvas id="driverOrdersChart"></canvas>
           </div>
+          <!-- הגרף החדש: כמות הזמנות לפי מחסן -->
+          <div class="chart-box">
+              <h3>🏷 הזמנות לפי מחסן</h3>
+              <canvas id="warehouseChart"></canvas>
+          </div>
       </div>
+  </div>
+
+  <!-- רשימה אמצעית: הזמנות ממתינות ליציאה -->
+  <div class="waiting-list-container">
+    <h2>📋 הזמנות ממתינות ליציאה</h2>
+    <div id="waitingList"></div>
   </div>
 
   <!-- אזור הטופס מצד ימין ורשימת הזמנות מצד שמאל -->
@@ -113,7 +117,7 @@
         </form>
     </div>
 
-    <!-- רשימת הזמנות -->
+    <!-- רשימת הזמנות (טבלה מקיפה) -->
     <div class="orders-list-container">
         <hr style="margin: 30px 0;" />
         <h2>📜 רשימת הזמנות</h2>

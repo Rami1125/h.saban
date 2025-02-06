@@ -25,10 +25,17 @@
   <!-- שעון און ליין צבעוני -->
   <div class="clock" id="currentTime"></div>
 
-  <!-- אזור להזמנה הקרובה -->
+  <!-- אזור להזמנה הקרובה (רק אחת) -->
   <div class="next-order-container">
     <h2>🚨 הזמנה קרובה</h2>
-    <div class="next-order-blink" id="nextOrderInfo">אין הזמנות כרגע</div>
+    <!-- הטקסט כאן כבר לא מהבהב -->
+    <div class="next-order-blink no-blink" id="nextOrderInfo">אין הזמנות כרגע</div>
+  </div>
+
+  <!-- אזור להצגת כמה הזמנות מוקדמות (עד 3) עם אימוג׳י מהבהב -->
+  <div class="upcoming-list-container">
+    <h2>✨ רשימת הזמנות ראשונות</h2>
+    <div id="upcomingOrdersList"></div>
   </div>
 
   <!-- מסגרת הגרפים -->
@@ -107,7 +114,7 @@
     </div>
 
     <!-- רשימת הזמנות -->
-    <div style="width: 60%; margin: 20px;">
+    <div class="orders-list-container">
         <hr style="margin: 30px 0;" />
         <h2>📜 רשימת הזמנות</h2>
         <table class="orders-table" id="ordersTable">

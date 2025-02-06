@@ -3,7 +3,7 @@ Chart.register(ChartDataLabels);
 
 let orders = [];
 
-/* טוענים הזמנות ששמורות ב-Local Storage (אם קיימות) */
+/* טעינת הזמנות ששמורות ב-Local Storage (אם קיימות) */
 loadOrdersFromStorage();
 
 /* טווח שעות מ-06:00 עד 17:00 בכל חצי שעה */
@@ -115,21 +115,48 @@ const driverOrdersChart = new Chart(document.getElementById("driverOrdersChart")
   },
 });
 
-// סטטוסים אפשריים (כולל 'סופקה')
+// גרף חדש: הזמנות לפי מחסן
+const warehouseChart = new Chart(document.getElementById("warehouseChart"), {
+  type: "bar",
+  data: {
+    labels: ["מחסן החרש", "מחסן התלמיד"],
+    datasets: [
+      {
+        label: "מספר הזמנות",
+        data: [0, 0], // נעדכן דינאמית
+        backgroundColor: ["#ffa500", "#ff69b4"],
+      },
+    ],
+  },
+  options: {
+    scales: { y: { beginAtZero: true } },
+    plugins: {
+      legend: { display: true },
+      datalabels: {
+        color: "#000",
+        font: { weight: "bold" },
+        anchor: "end",
+        align: "top",
+        display: true,
+        formatter: (value) => value,
+      },
+    },
+  },
+});
+
+/* סטטוסים אפשריים (כולל 'סופקה') */
 const statuses = ["מוכנה", "בטיפול", "מתעכבת", "סופקה"];
 
-/* עבור הזמנות בראש הדף - אימוג'י בצבע סטטוס + הבהוב */
-function getEmojiForStatus(status) {
-  switch (status) {
-    case "מוכנה":     return "<span class='blink-emoji'>🟢</span>";
-    case "בטיפול":    return "<span class='blink-emoji'>🟡</span>";
-    case "מתעכבת":    return "<span class='blink-emoji'>🔴</span>";
-    case "סופקה":     return "<span class='blink-emoji'>🟣</span>";
-    default:          return "";
-  }
+/* פונקציה שמחזירה class המתאימה לרשימה האמצעית */
+function getWaitingClass(status) {
+  if (status === "מוכנה")     return "waiting-ready";
+  if (status === "בטיפול")    return "waiting-in-progress";
+  if (status === "מתעכבת")    return "waiting-delayed";
+  if (status === "סופקה")     return "waiting-supka";
+  return "";
 }
 
-// פונקציה שמחזירה את מחלקת ה-CSS הנכונה לפי הסטטוס (בלי הבהוב)
+/* פונקציה שמחזירה את מחלקת ה-CSS הנכונה לפי הסטטוס (לטבלה) */
 function getStatusClass(status) {
   if (status === "מוכנה")     return "status-ready";
   if (status === "בטיפול")    return "status-in-progress";
@@ -175,29 +202,28 @@ function updateNextOrderBanner() {
   nextOrderDiv.innerHTML = `לקוח: ${earliest.customerName}, נהג: ${earliest.driverName}`;
 }
 
-// מציג עד 3 הזמנות בראש הדף עם אימוג׳י מהבהב לפי סטטוס
-function updateUpcomingOrdersList() {
-  const container = document.getElementById("upcomingOrdersList");
+// רשימה אמצעית: הזמנות ממתינות ליציאה
+// (כל ההזמנות, ממוינות מהקרובה ביותר לרחוקה)
+function renderWaitingList() {
+  const container = document.getElementById("waitingList");
   if (!container) return;
-
   container.innerHTML = "";
+
   if (orders.length === 0) {
-    container.innerHTML = "אין הזמנות";
+    container.innerHTML = "אין הזמנות ממתינות";
     return;
   }
 
-  // ניקח את ההזמנות הראשונות (3 במקרה זה) אחרי שמיין
-  const maxShow = Math.min(orders.length, 3);
-  for (let i = 0; i < maxShow; i++) {
-    const o = orders[i];
-    const circle = getEmojiForStatus(o.status);
+  // פשוט נריץ על כל ההזמנות (כבר ממוינות)
+  orders.forEach((o) => {
     const div = document.createElement("div");
-    div.className = "mini-order-line";
+    div.classList.add("waiting-item");
+    div.classList.add(getWaitingClass(o.status));
     div.innerHTML = `
-      ${circle} לקוח: ${o.customerName}, נהג: ${o.driverName}, שעת אספקה: ${o.deliveryTime}
+      לקוח: <b>${o.customerName}</b> | נהג: <b>${o.driverName}</b> | שעת אספקה: <b>${o.deliveryTime}</b> | סטטוס: <b>${o.status}</b>
     `;
     container.appendChild(div);
-  }
+  });
 }
 
 // עדכון כל הגרפים
@@ -206,7 +232,7 @@ function updateCharts() {
   totalOrdersChart.data.datasets[0].data = [orders.length];
   totalOrdersChart.update();
 
-  // תרשים הזמנות מוכנות (רק 'מוכנה')
+  // תרשים הזמנות מוכנות (נחשבות רק 'מוכנה')
   const readyCount = orders.filter((order) => order.status === "מוכנה").length;
   readyOrdersChart.data.datasets[0].data = [readyCount, orders.length - readyCount];
   readyOrdersChart.update();
@@ -218,6 +244,12 @@ function updateCharts() {
   );
   driverOrdersChart.data.datasets[0].data = driverCounts;
   driverOrdersChart.update();
+
+  // תרשים הזמנות לפי מחסן
+  let countHarash = orders.filter((o) => o.warehouse === "מחסן החרש").length;
+  let countTalmid = orders.filter((o) => o.warehouse === "מחסן התלמיד").length;
+  warehouseChart.data.datasets[0].data = [countHarash, countTalmid];
+  warehouseChart.update();
 }
 
 /* הוספת הזמנה חדשה */
@@ -235,13 +267,13 @@ function addOrder() {
   orders.push(order);
   sortOrders();
   renderOrders();
+  renderWaitingList();
   updateNextOrderBanner();
-  updateUpcomingOrdersList();
   updateCharts();
   saveOrdersToStorage();
 }
 
-/* רינדור הטבלה */
+/* רינדור הטבלה (סוף הדף) */
 function renderOrders() {
   const tbody = document.querySelector("#ordersTable tbody");
   tbody.innerHTML = "";
@@ -281,8 +313,8 @@ function updateStatus(index) {
 
   sortOrders();
   renderOrders();
+  renderWaitingList();
   updateNextOrderBanner();
-  updateUpcomingOrdersList();
   updateCharts();
   saveOrdersToStorage();
 }
@@ -292,8 +324,8 @@ function deleteOrder(index) {
   orders.splice(index, 1);
   sortOrders();
   renderOrders();
+  renderWaitingList();
   updateNextOrderBanner();
-  updateUpcomingOrdersList();
   updateCharts();
   saveOrdersToStorage();
 }
@@ -303,8 +335,8 @@ function updateOrderTime(index, newTime) {
   orders[index].deliveryTime = newTime;
   sortOrders();
   renderOrders();
+  renderWaitingList();
   updateNextOrderBanner();
-  updateUpcomingOrdersList();
   updateCharts();
   saveOrdersToStorage();
 }
@@ -315,9 +347,9 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 
-/* רינדור התחלתי (לאחר טעינת אחסון) */
+/* רענון ראשוני */
 sortOrders();
 renderOrders();
+renderWaitingList();
 updateNextOrderBanner();
-updateUpcomingOrdersList();
 updateCharts();

@@ -1,7 +1,4 @@
-/* דוגמא לרקע: אפשר להשאיר או לשנות לתמונה
-   background: url("bg.jpg") no-repeat center center fixed;
-   background-size: cover;
-*/
+/* דוגמה: יכול להיות צבע או תמונת רקע */
 body {
   font-family: 'Arial', sans-serif;
   direction: rtl;
@@ -9,9 +6,9 @@ body {
   margin: 0;
   padding: 0;
   background-color: #f4f7f6;
-  min-height: 100vh; /* מכסה לפחות את כל גובה המסך */
+  min-height: 100vh; /* גובה מינימלי כל המסך */
   max-width: 100%;
-  overflow-x: hidden; /* מונע גלילה רוחבית */
+  overflow-x: hidden; /* בלי גלילה רוחבית */
 }
 
 .header {
@@ -66,21 +63,51 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* האזור המרכזי: טופס מימין ורשימת הזמנות משמאל (ברוחב גדול) */
+/* 
+   אזור מיוחד להזמנות הראשונות בראש הדף
+   הקטנה כדי לא לעבור מסגרת 
+*/
+.upcoming-list-container {
+  max-width: 95%;
+  margin: 0 auto 20px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+/* מראה של כל שורה בהזמנה בראש */
+.mini-order-line {
+  margin: 6px auto;
+}
+
+/* אימוג'י המהבהב (עיגול בצבע הסטטוס) */
+@keyframes blinkEmoji {
+  50% {
+    opacity: 0;
+  }
+}
+.blink-emoji {
+  animation: blinkEmoji 1s infinite;
+}
+
+/* אין הבהוב בטקסט עצמו (ביטול אנימציה) */
+.no-blink {
+  animation: none !important;
+}
+
+/* אזור הטופס+טבלה */
 .orders-section {
   display: flex;
-  flex-direction: row-reverse; /* טבלה לצד ימין */
+  flex-direction: row-reverse;
   width: 100%;
   justify-content: flex-end;
 }
 
-/* טופס הזמנה */
 .order-form-container {
   width: 40%;
   margin: 20px;
 }
 
-/* רשימת הזמנות */
 .orders-list-container {
   width: 60%;
   margin: 20px;
@@ -139,29 +166,25 @@ button:hover {
   background-color: darkred;
 }
 
-/* צבעים לסטטוסים */
+/* ביטול הבהוב מכל השורה: רק צבע מלא */
 .status-ready {
   background-color: green;
   color: white;
-  animation: blink 1s infinite;
 }
 
 .status-in-progress {
   background-color: yellow;
   color: black;
-  animation: blink 1s infinite;
 }
 
 .status-delayed {
   background-color: red;
   color: white;
-  animation: blink 1s infinite;
 }
 
 .status-supka {
   background-color: purple;
   color: white;
-  animation: blink 1s infinite;
 }
 
 /* אזור להזמנה הקרובה */
@@ -178,12 +201,11 @@ button:hover {
   margin: 10px auto;
   width: fit-content;
   border-radius: 10px;
-  animation: blink 1s infinite;
+  /* animation: blink 1s infinite; - בוטל! */
 }
 
-/* מדיה קוורי למסכים עד רוחב 600px */
+/* מדיה קוורי למסכים צרים */
 @media (max-width: 600px) {
-  /* מעביר לפריסה אנכית */
   .orders-section {
     flex-direction: column;
     align-items: center;
@@ -197,12 +219,11 @@ button:hover {
 
   .charts-frame {
     width: 95%;
-    border: 1px solid #ccc; /* אפשר להקטין או לשנות אם רוצים */
   }
 
   .chart-box {
-    width: 90% !important; /* מגדיל את הגרף כמעט לכל הרוחב */
-    max-width: 300px;      /* אבל מגביל אותו שהגבולות יהיו הגיוניים */
+    width: 90% !important;
+    max-width: 300px;
     margin: 10px auto;
   }
 }

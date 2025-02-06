@@ -1,10 +1,17 @@
+/* דוגמא לרקע: אפשר להשאיר או לשנות לתמונה
+   background: url("bg.jpg") no-repeat center center fixed;
+   background-size: cover;
+*/
 body {
   font-family: 'Arial', sans-serif;
   direction: rtl;
   text-align: center;
-  background-color: #f4f7f6;
   margin: 0;
   padding: 0;
+  background-color: #f4f7f6;
+  min-height: 100vh; /* מכסה לפחות את כל גובה המסך */
+  max-width: 100%;
+  overflow-x: hidden; /* מונע גלילה רוחבית */
 }
 
 .header {
@@ -59,7 +66,7 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* טבלת ההזמנות בצד ימין */
+/* האזור המרכזי: טופס מימין ורשימת הזמנות משמאל (ברוחב גדול) */
 .orders-section {
   display: flex;
   flex-direction: row-reverse; /* טבלה לצד ימין */
@@ -67,9 +74,22 @@ body {
   justify-content: flex-end;
 }
 
-.orders-table {
-  width: 50%;
+/* טופס הזמנה */
+.order-form-container {
+  width: 40%;
   margin: 20px;
+}
+
+/* רשימת הזמנות */
+.orders-list-container {
+  width: 60%;
+  margin: 20px;
+}
+
+/* טבלת ההזמנות */
+.orders-table {
+  width: 100%;
+  margin: 0 auto;
   border-collapse: collapse;
   background-color: white;
   border-radius: 10px;
@@ -144,18 +164,6 @@ button:hover {
   animation: blink 1s infinite;
 }
 
-/* סגנון לטופס ההזמנה בצד שמאל */
-.order-form-container {
-  width: 40%;
-  margin: 20px;
-}
-
-/* טבלאות */
-.order-form-container table,
-.orders-table {
-  width: 100%;
-}
-
 /* אזור להזמנה הקרובה */
 .next-order-container {
   margin: 20px auto;
@@ -171,4 +179,30 @@ button:hover {
   width: fit-content;
   border-radius: 10px;
   animation: blink 1s infinite;
+}
+
+/* מדיה קוורי למסכים עד רוחב 600px */
+@media (max-width: 600px) {
+  /* מעביר לפריסה אנכית */
+  .orders-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .order-form-container, 
+  .orders-list-container {
+    width: 95% !important;
+    margin: 10px auto;
+  }
+
+  .charts-frame {
+    width: 95%;
+    border: 1px solid #ccc; /* אפשר להקטין או לשנות אם רוצים */
+  }
+
+  .chart-box {
+    width: 90% !important; /* מגדיל את הגרף כמעט לכל הרוחב */
+    max-width: 300px;      /* אבל מגביל אותו שהגבולות יהיו הגיוניים */
+    margin: 10px auto;
+  }
 }

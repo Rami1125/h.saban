@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="he">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🚛 מערכת ניהול הזמנות 📦</title>
   
-  <!-- קישור לקובץ העיצובים -->
-  <link rel="stylesheet" href="style.css" />
+  <!-- קובץ עיצוב חיצוני -->
+  <link rel="stylesheet" href="style.css">
   
-  <!-- ספריות צד שלישי (Chart.js + DataLabels) -->
+  <!-- ספריות Chart.js + DataLabels -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
   
@@ -16,16 +16,16 @@
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  
-  <!-- כותרת -->
+
+  <!-- כותרת עליונה -->
   <div class="header">
     <i class="fas fa-truck"></i> מערכת ניהול הזמנות 🚛📦
   </div>
 
-  <!-- שעון און ליין צבעוני -->
+  <!-- שעון און ליין -->
   <div class="clock" id="currentTime"></div>
 
-  <!-- אזור להזמנה הקרובה (רק אחת) -->
+  <!-- אזור להזמנה הקרובה -->
   <div class="next-order-container">
     <h2>🚨 הזמנה קרובה</h2>
     <div class="next-order-blink no-blink" id="nextOrderInfo">אין הזמנות כרגע</div>
@@ -33,114 +33,139 @@
 
   <!-- מסגרת הגרפים -->
   <div class="charts-frame">
-      <h2>🔢 גרפים ונתונים</h2>
-      <div class="chart-container">
-          <div class="chart-box">
-              <h3>📦 כמות הזמנות</h3>
-              <canvas id="totalOrdersChart"></canvas>
-          </div>
-          <div class="chart-box">
-              <h3>✅ הזמנות מוכנות</h3>
-              <canvas id="readyOrdersChart"></canvas>
-          </div>
-          <div class="chart-box">
-              <h3>🚛 הזמנות לפי נהג</h3>
-              <canvas id="driverOrdersChart"></canvas>
-          </div>
-          <!-- הגרף החדש: כמות הזמנות לפי מחסן -->
-          <div class="chart-box">
-              <h3>🏷 הזמנות לפי מחסן</h3>
-              <canvas id="warehouseChart"></canvas>
-          </div>
+    <h2>🔢 גרפים ונתונים</h2>
+    <div class="chart-container">
+      <div class="chart-box">
+        <h3>📦 כמות הזמנות</h3>
+        <canvas id="totalOrdersChart"></canvas>
       </div>
+      <div class="chart-box">
+        <h3>✅ הזמנות מוכנות</h3>
+        <canvas id="readyOrdersChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>🚛 הזמנות לפי נהג</h3>
+        <canvas id="driverOrdersChart"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>🏷 הזמנות לפי מחסן</h3>
+        <canvas id="warehouseChart"></canvas>
+      </div>
+    </div>
   </div>
 
-  <!-- רשימה אמצעית: הזמנות ממתינות ליציאה -->
+  <!-- רשימת אמצע הדף: הזמנות ממתינות ליציאה -->
   <div class="waiting-list-container">
     <h2>📋 הזמנות ממתינות ליציאה</h2>
     <div id="waitingList"></div>
   </div>
 
-  <!-- אזור הטופס מצד ימין ורשימת הזמנות מצד שמאל -->
+  <!-- אזור הטופס ורשימת הזמנות מפורטת -->
   <div class="orders-section">
 
     <!-- טופס הזמנה -->
     <div class="order-form-container">
-        <h1>📋 טופס הזמנה</h1>
-        <form id="orderForm">
-            <table>
-                <tr>
-                    <th>👤 שם לקוח</th>
-                    <td><input type="text" id="customerName" required/></td>
-                </tr>
-                <tr>
-                    <th>📍 כתובת אספקה</th>
-                    <td><input type="text" id="deliveryAddress" required/></td>
-                </tr>
-                <tr>
-                    <th>🏷 מחסן</th>
-                    <td>
-                        <select id="warehouse" required>
-                            <option value="מחסן החרש">מחסן החרש</option>
-                            <option value="מחסן התלמיד">מחסן התלמיד</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>🚚 סוג הובלה</th>
-                    <td>
-                        <select id="transportType" required>
-                            <option value="משאית">משאית</option>
-                            <option value="מנוף">מנוף</option>
-                            <option value="מנוף 15 מטר">מנוף 15 מטר</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>👷 נהג</th>
-                    <td>
-                        <select id="driverName" required>
-                            <option value="חכמת">חכמת</option>
-                            <option value="שאול">שאול</option>
-                            <option value="עלי">עלי</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>⏰ שעת אספקה</th>
-                    <td>
-                        <select id="deliveryTime" required></select>
-                    </td>
-                </tr>
-            </table>
-            <button type="button" onclick="addOrder()">📦 הוסף הזמנה</button>
-        </form>
-    </div>
-
-    <!-- רשימת הזמנות (טבלה מקיפה) -->
-    <div class="orders-list-container">
-        <hr style="margin: 30px 0;" />
-        <h2>📜 רשימת הזמנות</h2>
-        <table class="orders-table" id="ordersTable">
-            <thead>
-                <tr>
-                    <th>שם לקוח</th>
-                    <th>כתובת אספקה</th>
-                    <th>מחסן</th>
-                    <th>סוג הובלה</th>
-                    <th>נהג</th>
-                    <th>שעת אספקה</th>
-                    <th>סטטוס</th>
-                    <th>מחיקה</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
+      <h1>📋 טופס הזמנה</h1>
+      <form id="orderForm">
+        <table>
+          <tr>
+            <th>👤 שם לקוח</th>
+            <td><input type="text" id="customerName" required></td>
+          </tr>
+          <tr>
+            <th>📍 כתובת אספקה</th>
+            <td><input type="text" id="deliveryAddress" required></td>
+          </tr>
+          <tr>
+            <th>🏷 מחסן</th>
+            <td>
+              <select id="warehouse" required>
+                <option value="מחסן החרש">מחסן החרש</option>
+                <option value="מחסן התלמיד">מחסן התלמיד</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>🚚 סוג הובלה</th>
+            <td>
+              <select id="transportType" required>
+                <option value="משאית">משאית</option>
+                <option value="מנוף">מנוף</option>
+                <option value="מנוף 15 מטר">מנוף 15 מטר</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>👷 נהג</th>
+            <td>
+              <select id="driverName" required>
+                <option value="חכמת">חכמת</option>
+                <option value="שאול">שאול</option>
+                <option value="עלי">עלי</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>⏰ שעת אספקה</th>
+            <td>
+              <select id="deliveryTime" required></select>
+            </td>
+          </tr>
         </table>
+        <button type="button" onclick="addOrder()">📦 הוסף הזמנה</button>
+      </form>
     </div>
 
+    <!-- טבלת הזמנות מלאה -->
+    <div class="orders-list-container">
+      <hr style="margin: 30px 0;">
+      <h2>📜 רשימת הזמנות</h2>
+      <table class="orders-table" id="ordersTable">
+        <thead>
+          <tr>
+            <th>שם לקוח</th>
+            <th>כתובת אספקה</th>
+            <th>מחסן</th>
+            <th>סוג הובלה</th>
+            <th>נהג</th>
+            <th>שעת אספקה</th>
+            <th>סטטוס</th>
+            <th>מחיקה</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
-  
-  <!-- הקובץ הסקריפטים (JavaScript) -->
+
+  <!-- סיכום הזמנות שסופקה בתחתית הדף -->
+  <div class="provided-section">
+    <h2>✅ דו\"ח הזמנות שסופקו</h2>
+    <div class="provided-report">
+      <!-- גרף מצד שמאל -->
+      <div class="provided-chart">
+        <h3>סופקה לפי נהג</h3>
+        <canvas id="providedOrdersChart"></canvas>
+      </div>
+      <!-- טבלה מצד ימין -->
+      <div class="provided-table-container">
+        <h3>רשימת הזמנות שסופקה</h3>
+        <table id="providedOrdersTable">
+          <thead>
+            <tr>
+              <th>שם לקוח</th>
+              <th>מחסן</th>
+              <th>נהג</th>
+              <th>שעת אספקה</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- סקריפט שלנו -->
   <script src="script.js"></script>
 </body>
 </html>

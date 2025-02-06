@@ -193,4 +193,131 @@ function updateUpcomingOrdersList() {
     const circle = getEmojiForStatus(o.status);
     const div = document.createElement("div");
     div.className = "mini-order-line";
- 
+    div.innerHTML = `
+      ${circle} לקוח: ${o.customerName}, נהג: ${o.driverName}, שעת אספקה: ${o.deliveryTime}
+    `;
+    container.appendChild(div);
+  }
+}
+
+// עדכון כל הגרפים
+function updateCharts() {
+  // תרשים כמות הזמנות
+  totalOrdersChart.data.datasets[0].data = [orders.length];
+  totalOrdersChart.update();
+
+  // תרשים הזמנות מוכנות (רק 'מוכנה')
+  const readyCount = orders.filter((order) => order.status === "מוכנה").length;
+  readyOrdersChart.data.datasets[0].data = [readyCount, orders.length - readyCount];
+  readyOrdersChart.update();
+
+  // תרשים הזמנות לפי נהג
+  const drivers = ["חכמת", "שאול", "עלי"];
+  const driverCounts = drivers.map(
+    (driver) => orders.filter((order) => order.driverName === driver).length
+  );
+  driverOrdersChart.data.datasets[0].data = driverCounts;
+  driverOrdersChart.update();
+}
+
+/* הוספת הזמנה חדשה */
+function addOrder() {
+  const order = {
+    customerName:  document.getElementById("customerName").value,
+    deliveryAddress: document.getElementById("deliveryAddress").value,
+    warehouse:     document.getElementById("warehouse").value,
+    transportType: document.getElementById("transportType").value,
+    driverName:    document.getElementById("driverName").value,
+    deliveryTime:  document.getElementById("deliveryTime").value,
+    status:        "בטיפול", // ברירת מחדל
+  };
+
+  orders.push(order);
+  sortOrders();
+  renderOrders();
+  updateNextOrderBanner();
+  updateUpcomingOrdersList();
+  updateCharts();
+  saveOrdersToStorage();
+}
+
+/* רינדור הטבלה */
+function renderOrders() {
+  const tbody = document.querySelector("#ordersTable tbody");
+  tbody.innerHTML = "";
+
+  orders.forEach((order, index) => {
+    tbody.innerHTML += `
+      <tr class="${getStatusClass(order.status)}">
+        <td>${order.customerName}</td>
+        <td>${order.deliveryAddress}</td>
+        <td>${order.warehouse}</td>
+        <td>${order.transportType}</td>
+        <td>${order.driverName}</td>
+        <td>
+          <select onchange="updateOrderTime(${index}, this.value)">
+            ${timeOptions
+              .map(
+                (t) =>
+                  `<option value='${t}' ${
+                    t === order.deliveryTime ? "selected" : ""
+                  }>${t}</option>`
+              )
+              .join("")}
+          </select>
+        </td>
+        <td><button onclick="updateStatus(${index})">${order.status}</button></td>
+        <td><button class="delete-btn" onclick="deleteOrder(${index})">🗑</button></td>
+      </tr>
+    `;
+  });
+}
+
+/* שינוי סטטוס ההזמנה */
+function updateStatus(index) {
+  const currentStatus = orders[index].status;
+  const currentIndex = statuses.indexOf(currentStatus);
+  orders[index].status = statuses[(currentIndex + 1) % statuses.length];
+
+  sortOrders();
+  renderOrders();
+  updateNextOrderBanner();
+  updateUpcomingOrdersList();
+  updateCharts();
+  saveOrdersToStorage();
+}
+
+/* מחיקת הזמנה */
+function deleteOrder(index) {
+  orders.splice(index, 1);
+  sortOrders();
+  renderOrders();
+  updateNextOrderBanner();
+  updateUpcomingOrdersList();
+  updateCharts();
+  saveOrdersToStorage();
+}
+
+/* שינוי זמן אספקה */
+function updateOrderTime(index, newTime) {
+  orders[index].deliveryTime = newTime;
+  sortOrders();
+  renderOrders();
+  updateNextOrderBanner();
+  updateUpcomingOrdersList();
+  updateCharts();
+  saveOrdersToStorage();
+}
+
+/* עדכון השעון */
+function updateClock() {
+  document.getElementById("currentTime").innerText = new Date().toLocaleString("he-IL");
+}
+setInterval(updateClock, 1000);
+
+/* רינדור התחלתי (לאחר טעינת אחסון) */
+sortOrders();
+renderOrders();
+updateNextOrderBanner();
+updateUpcomingOrdersList();
+updateCharts();

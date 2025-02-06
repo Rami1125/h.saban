@@ -1,63 +1,550 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 0;
-}
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚛 מערכת ניהול הזמנות 📦</title>
+    <!-- ספריית Chart.js ליצירת גרפים (עם DataLabels) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <!-- אייקונים (Font Awesome) -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-.container {
-    max-width: 400px;
-    margin: 20px auto;
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    direction: rtl;
-}
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            direction: rtl;
+            text-align: center;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .clock {
+            font-size: 22px;
+            font-weight: bold;
+            background-color: #ff0000;
+            color: white;
+            padding: 10px;
+            margin: 10px auto;
+            width: fit-content;
+            border-radius: 10px;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        /* מסגרת לגרפים */
+        .charts-frame {
+            width: 95%;
+            margin: 20px auto;
+            border: 2px dashed #aaa;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .chart-box {
+            width: 250px;
+            height: 250px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        /* טבלת ההזמנות בצד ימין*/
+        .orders-section {
+            display: flex;
+            flex-direction: row-reverse; /* טבלה לצד ימין */
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .orders-table {
+            width: 50%;
+            margin: 20px;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        input, select, button {
+            padding: 8px;
+            font-size: 16px;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .delete-btn {
+            background-color: red;
+            font-size: 16px;
+            padding: 5px;
+        }
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+        /* צבעים לסטטוסים */
+        .status-ready {
+            background-color: green;
+            color: white;
+            animation: blink 1s infinite;
+        }
+        .status-in-progress {
+            background-color: yellow;
+            color: black;
+            animation: blink 1s infinite;
+        }
+        .status-delayed {
+            background-color: red;
+            color: white;
+            animation: blink 1s infinite;
+        }
+        .status-supka {
+            background-color: purple;
+            color: white;
+            animation: blink 1s infinite;
+        }
+        /* סגנון לטופס ההזמנה בצד שמאל */
+        .order-form-container {
+            width: 40%;
+            margin: 20px;
+        }
+        table {
+            width: 100%;
+        }
 
-h1, h2 {
-    text-align: center;
-    color: #007BFF;
-}
+        /* אזור להזמנה הקרובה */
+        .next-order-container {
+            margin: 20px auto;
+        }
+        .next-order-blink {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: #ff00ff;
+            padding: 10px;
+            margin: 10px auto;
+            width: fit-content;
+            border-radius: 10px;
+            animation: blink 1s infinite;
+        }
+    </style>
+</head>
+<body>
 
-button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 16px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+    <!-- כותרת -->
+    <div class="header">
+        <i class="fas fa-truck"></i> מערכת ניהול הזמנות 🚛📦
+    </div>
 
-button:hover {
-    background-color: #0056b3;
-}
+    <!-- שעון און ליין צבעוני -->
+    <div class="clock" id="currentTime"></div>
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
+    <!-- אזור להזמנה הקרובה -->
+    <div class="next-order-container">
+        <h2>🚨 הזמנה קרובה</h2>
+        <div class="next-order-blink" id="nextOrderInfo">אין הזמנות כרגע</div>
+    </div>
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-}
+    <!-- מסגרת הגרפים -->
+    <div class="charts-frame">
+        <h2>🔢 גרפים ונתונים</h2>
+        <div class="chart-container">
+            <div class="chart-box">
+                <h3>📦 כמות הזמנות</h3>
+                <canvas id="totalOrdersChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3>✅ הזמנות מוכנות</h3>
+                <canvas id="readyOrdersChart"></canvas>
+            </div>
+            <div class="chart-box">
+                <h3>🚛 הזמנות לפי נהג</h3>
+                <canvas id="driverOrdersChart"></canvas>
+            </div>
+        </div>
+    </div>
 
-.status {
-    font-weight: bold;
-    animation: blink 1s infinite;
-}
+    <div class="orders-section">
+        <!-- טופס הזמנה בצד ימין -->
+        <div class="order-form-container">
+            <h1>📋 טופס הזמנה</h1>
+            <!-- טופס הזמנה -->
+            <form id="orderForm">
+                <table>
+                    <tr>
+                        <th>👤 שם לקוח</th>
+                        <td><input type="text" id="customerName" required></td>
+                    </tr>
+                    <tr>
+                        <th>📍 כתובת אספקה</th>
+                        <td><input type="text" id="deliveryAddress" required></td>
+                    </tr>
+                    <tr>
+                        <th>🏷 מחסן</th>
+                        <td>
+                            <select id="warehouse" required>
+                                <option value="מחסן החרש">מחסן החרש</option>
+                                <option value="מחסן התלמיד">מחסן התלמיד</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>🚚 סוג הובלה</th>
+                        <td>
+                            <select id="transportType" required>
+                                <option value="משאית">משאית</option>
+                                <option value="מנוף">מנוף</option>
+                                <option value="מנוף 15 מטר">מנוף 15 מטר</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>👷 נהג</th>
+                        <td>
+                            <select id="driverName" required>
+                                <option value="חכמת">חכמת</option>
+                                <option value="שאול">שאול</option>
+                                <option value="עלי">עלי</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>⏰ שעת אספקה</th>
+                        <td>
+                            <select id="deliveryTime" required>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+                <button type="button" onclick="addOrder()">📦 הוסף הזמנה</button>
+            </form>
+        </div>
 
-@keyframes blink {
-    50% { opacity: 0.5; }
-}
+        <div style="width: 60%; margin: 20px;">
+            <!-- קו מפריד -->
+            <hr style="margin: 30px 0;">
+            <h2>📜 רשימת הזמנות</h2>
+            <table class="orders-table" id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>שם לקוח</th>
+                        <th>כתובת אספקה</th>
+                        <th>מחסן</th>
+                        <th>סוג הובלה</th>
+                        <th>נהג</th>
+                        <th>שעת אספקה</th>
+                        <th>סטטוס</th>
+                        <th>מחיקה</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
 
-.green { color: green; }
-.yellow { color: orange; }
-.red { color: red; }
-.orange { color: darkorange; }
+    <script>
+        // רישום הפלאגין של DataLabels
+        Chart.register(ChartDataLabels);
+
+        let orders = [];
+
+        // טווח שעות מ-06:00 עד 17:00 בכל חצי שעה
+        const timeOptions = generateTimeSlots("06:00", "17:00", 30);
+
+        // פונקציה ליצירת רשימת זמני חצי שעה
+        function generateTimeSlots(start, end, stepMinutes) {
+            const slots = [];
+            let startParts = start.split(":");
+            let endParts = end.split(":");
+
+            let startHour = parseInt(startParts[0]);
+            let startMinute = parseInt(startParts[1]);
+            let endHour = parseInt(endParts[0]);
+            let endMinute = parseInt(endParts[1]);
+
+            let currentHour = startHour;
+            let currentMinute = startMinute;
+
+            while (currentHour < endHour || (currentHour === endHour && currentMinute <= endMinute)) {
+                const hh = String(currentHour).padStart(2, '0');
+                const mm = String(currentMinute).padStart(2, '0');
+                slots.push(`${hh}:${mm}`);
+
+                // הוספת דקות
+                currentMinute += stepMinutes;
+                if (currentMinute >= 60) {
+                    currentHour++;
+                    currentMinute -= 60;
+                }
+            }
+            return slots;
+        }
+
+        // ממלא את ה-select בשעות האספקה
+        const deliveryTimeSelect = document.getElementById('deliveryTime');
+        timeOptions.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.textContent = t;
+            deliveryTimeSelect.appendChild(opt);
+        });
+
+        // תרשים: כמות הזמנות
+        const totalOrdersChart = new Chart(document.getElementById('totalOrdersChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['הזמנות'],
+                datasets: [{
+                    label: 'מספר כמות הזמנות', // תווית לגרף
+                    data: [0],
+                    backgroundColor: ['#007bff']
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: {
+                            weight: 'bold'
+                        },
+                        display: true,
+                        formatter: (value, ctx) => {
+                            return value;
+                        }
+                    }
+                }
+            }
+        });
+
+        // תרשים: הזמנות מוכנות לעומת לא מוכנות
+        const readyOrdersChart = new Chart(document.getElementById('readyOrdersChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['מוכנות', 'לא מוכנות'],
+                datasets: [{
+                    data: [0, 0],
+                    backgroundColor: ['#28a745', '#ff0000']
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: true
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: {
+                            weight: 'bold'
+                        },
+                        display: true,
+                        formatter: (value, ctx) => {
+                            return value;
+                        }
+                    }
+                }
+            }
+        });
+
+        // תרשים: הזמנות לפי נהג
+        const driverOrdersChart = new Chart(document.getElementById('driverOrdersChart'), {
+            type: 'bar',
+            data: {
+                labels: ['חכמת', 'שאול', 'עלי'],
+                datasets: [{
+                    label: 'מספר הזמנות',
+                    data: [0, 0, 0],
+                    backgroundColor: ['#007bff', '#28a745', '#ff0000']
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        color: '#000',
+                        font: {
+                            weight: 'bold'
+                        },
+                        anchor: 'end',
+                        align: 'top',
+                        display: true,
+                        formatter: (value, ctx) => {
+                            return value;
+                        }
+                    }
+                }
+            }
+        });
+
+        // הוספנו 'סופקה' כסטטוס חדש
+        const statuses = ['מוכנה', 'בטיפול', 'מתעכבת', 'סופקה'];
+
+        // פונקציה שמחזירה את מחלקת ה-CSS הנכונה לפי הסטטוס
+        function getStatusClass(status) {
+            if (status === 'מוכנה') return 'status-ready';
+            if (status === 'בטיפול') return 'status-in-progress';
+            if (status === 'מתעכבת') return 'status-delayed';
+            if (status === 'סופקה') return 'status-supka';
+            return '';
+        }
+
+        // ממיר 'HH:MM' לדקות
+        function timeToMinutes(timeStr) {
+            const [hh, mm] = timeStr.split(":");
+            return parseInt(hh)*60 + parseInt(mm);
+        }
+
+        // ממיין את orders לפי שעת אספקה
+        function sortOrders() {
+            orders.sort((a,b) => timeToMinutes(a.deliveryTime) - timeToMinutes(b.deliveryTime));
+        }
+
+        // עדכון הבאנר של ההזמנה הקרובה
+        function updateNextOrderBanner() {
+            const nextOrderDiv = document.getElementById('nextOrderInfo');
+            if (!nextOrderDiv) return;
+            if (orders.length === 0) {
+                nextOrderDiv.innerHTML = 'אין הזמנות כרגע';
+                return;
+            }
+            // לאחר המיון, ההזמנה הקרובה ביותר תהיה orders[0]
+            const earliest = orders[0];
+            nextOrderDiv.innerHTML = `לקוח: ${earliest.customerName}, נהג: ${earliest.driverName}`;
+        }
+
+        // עדכון כל הגרפים
+        function updateCharts() {
+            // תרשים כמות הזמנות
+            totalOrdersChart.data.datasets[0].data = [orders.length];
+            totalOrdersChart.update();
+
+            // תרשים הזמנות מוכנות (נחשבות רק 'מוכנה')
+            const readyCount = orders.filter(order => order.status === 'מוכנה').length;
+            readyOrdersChart.data.datasets[0].data = [readyCount, orders.length - readyCount];
+            readyOrdersChart.update();
+
+            // תרשים הזמנות לפי נהג
+            const drivers = ['חכמת', 'שאול', 'עלי'];
+            const driverCounts = drivers.map(driver =>
+                orders.filter(order => order.driverName === driver).length
+            );
+            driverOrdersChart.data.datasets[0].data = driverCounts;
+            driverOrdersChart.update();
+        }
+
+        // הוספת הזמנה חדשה
+        function addOrder() {
+            const order = {
+                customerName: document.getElementById('customerName').value,
+                deliveryAddress: document.getElementById('deliveryAddress').value,
+                warehouse: document.getElementById('warehouse').value,
+                transportType: document.getElementById('transportType').value,
+                driverName: document.getElementById('driverName').value,
+                deliveryTime: document.getElementById('deliveryTime').value,
+                status: 'בטיפול' // ברירת מחדל להזמנה חדשה
+            };
+
+            orders.push(order);
+            sortOrders();
+            renderOrders();
+            updateNextOrderBanner();
+            updateCharts();
+        }
+
+        // הצגת ההזמנות בטבלה
+        function renderOrders() {
+            const tbody = document.querySelector('#ordersTable tbody');
+            tbody.innerHTML = '';
+
+            orders.forEach((order, index) => {
+                tbody.innerHTML += `
+                    <tr class="${getStatusClass(order.status)}">
+                        <td>${order.customerName}</td>
+                        <td>${order.deliveryAddress}</td>
+                        <td>${order.warehouse}</td>
+                        <td>${order.transportType}</td>
+                        <td>${order.driverName}</td>
+                        <td>
+                            <select onchange="updateOrderTime(${index}, this.value)">
+                                ${timeOptions.map(t => `<option value='${t}' ${t === order.deliveryTime ? 'selected' : ''}>${t}</option>`).join('')}
+                            </select>
+                        </td>
+                        <td><button onclick="updateStatus(${index})">${order.status}</button></td>
+                        <td><button class="delete-btn" onclick="deleteOrder(${index})">🗑</button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        // שינוי סטטוס ההזמנה
+        function updateStatus(index) {
+            // המעבר מתבצע לפי הסדר במערך statuses
+            const currentStatus = orders[index].status;
+            const currentIndex = statuses.indexOf(currentStatus);
+            orders[index].status = statuses[(currentIndex + 1) % statuses.length];
+            sortOrders();
+            renderOrders();
+            updateNextOrderBanner();
+            updateCharts();
+        }
+
+        // מחיקת הזמנה
+        function deleteOrder(index) {
+            orders.splice(index, 1);
+            sortOrders();
+            renderOrders();
+            updateNextOrderBanner();
+            updateCharts();
+        }
+
+        // שינוי זמן אספקה דינמי
+        function updateOrderTime(index, newTime) {
+            orders[index].deliveryTime = newTime;
+            sortOrders();
+            renderOrders();
+            updateNextOrderBanner();
+            updateCharts();
+        }
+
+        // עדכון השעון
+        function updateClock() {
+            document.getElementById('currentTime').innerText = new Date().toLocaleString('he-IL');
+        }
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

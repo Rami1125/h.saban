@@ -164,6 +164,107 @@
       </div>
     </div>
   </div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const colors = {
+        "גווני צהוב": [
+            { name: "צהוב לימון", color: "#FFF44F" },
+            { name: "צהוב שמש", color: "#FFD700" },
+            { name: "צהוב ענבר", color: "#FFBF00" },
+            { name: "צהוב חיוור", color: "#F0E68C" }
+        ],
+        "גווני ירוק קר": [
+            { name: "ירוק מנטה", color: "#98FB98" },
+            { name: "ירוק זית קר", color: "#6B8E23" },
+            { name: "ירוק אפרפר", color: "#778899" },
+            { name: "ירוק קפיץ", color: "#00FF7F" }
+        ],
+        "גווני לבן": [
+            { name: "לבן טהור", color: "#FFFFFF" },
+            { name: "לבן שנהב", color: "#FFFFF0" },
+            { name: "לבן ענן", color: "#F8F8FF" },
+            { name: "לבן מי ים", color: "#FFF5EE" }
+        ],
+        "גווני כחול בהיר": [
+            { name: "כחול שמיים", color: "#87CEEB" },
+            { name: "כחול חשמל", color: "#0000FF" },
+            { name: "כחול טורקיז", color: "#00CED1" }
+        ]
+    };
+
+    const container = document.querySelector(".container");
+
+    Object.keys(colors).forEach(category => {
+        const categoryTitle = document.createElement("h2");
+        categoryTitle.className = "category-title";
+        categoryTitle.textContent = category;
+        container.appendChild(categoryTitle);
+
+        const colorGrid = document.createElement("div");
+        colorGrid.className = "color-grid";
+
+        colors[category].forEach(item => {
+            const colorItem = document.createElement("div");
+            colorItem.className = "color-item";
+            colorItem.setAttribute("aria-label", item.name);
+            colorItem.setAttribute("role", "button");
+
+            const colorSquare = document.createElement("div");
+            colorSquare.className = "color-square";
+            colorSquare.style.background = item.color;
+
+            const colorName = document.createElement("div");
+            colorName.className = "color-name";
+            colorName.textContent = item.name;
+
+            const colorCode = document.createElement("div");
+            colorCode.className = "color-code";
+            colorCode.textContent = item.color;
+
+            const sizeSelector = document.createElement("select");
+            sizeSelector.innerHTML = `
+                <option value="1 ליטר">1 ליטר</option>
+                <option value="3 ליטר">3 ליטר</option>
+                <option value="5 ליטר">5 ליטר</option>
+                <option value="18 ליטר">18 ליטר</option>
+            `;
+
+            const orderButton = document.createElement("button");
+            orderButton.className = "order-button";
+            orderButton.textContent = "✨ לחצי כאן להזמנת הגוון ✨";
+            orderButton.onclick = () => orderColor(item.name, sizeSelector.value);
+
+            const zoomIcon = document.createElement("span");
+            zoomIcon.className = "zoom-icon";
+            zoomIcon.textContent = "🔍";
+            zoomIcon.onclick = () => zoomColor(item.color);
+
+            colorItem.appendChild(colorSquare);
+            colorItem.appendChild(colorName);
+            colorItem.appendChild(colorCode);
+            colorItem.appendChild(sizeSelector);
+            colorItem.appendChild(orderButton);
+            colorItem.appendChild(zoomIcon);
+            colorGrid.appendChild(colorItem);
+
+            colorItem.addEventListener("click", () => {
+                colorSquare.style.transform = "scale(1.2)";
+                setTimeout(() => colorSquare.style.transform = "scale(1)", 1000);
+            });
+        });
+
+        container.appendChild(colorGrid);
+    });
+
+    function orderColor(colorName, size) {
+        window.open(`https://wa.me/972508860896?text=אני מעוניינת להזמין את הגוון ${colorName} בגודל ${size}`, '_blank');
+    }
+
+    function zoomColor(color) {
+        alert(`תצוגה מוגדלת של הצבע: ${color}`);
+    }
+});
+</script>
 
   <!-- סקריפט שלנו -->
   <script src="script.js"></script>
